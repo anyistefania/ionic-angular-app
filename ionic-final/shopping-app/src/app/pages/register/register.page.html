@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="register-container">
+    <div class="header-section">
+      <ion-icon name="person-add" class="header-icon"></ion-icon>
+      <h1>Crear Cuenta</h1>
+      <p>Únete a nuestra comunidad</p>
+    </div>
+
+    <ion-card>
+      <ion-card-content>
+        <div class="input-group">
+          <ion-label position="stacked">
+            <ion-icon name="person-outline"></ion-icon>
+            Nombre Completo
+          </ion-label>
+          <ion-input 
+            type="text" 
+            [(ngModel)]="displayName"
+            placeholder="Juan Pérez"
+            fill="outline"
+            class="custom-input">
+          </ion-input>
+        </div>
+
+        <div class="input-group">
+          <ion-label position="stacked">
+            <ion-icon name="mail-outline"></ion-icon>
+            Email
+          </ion-label>
+          <ion-input 
+            type="email" 
+            [(ngModel)]="email"
+            placeholder="tu@email.com"
+            fill="outline"
+            class="custom-input">
+          </ion-input>
+        </div>
+
+        <div class="input-group">
+          <ion-label position="stacked">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            Contraseña
+          </ion-label>
+          <ion-input 
+            type="password" 
+            [(ngModel)]="password"
+            placeholder="Mínimo 6 caracteres"
+            fill="outline"
+            class="custom-input">
+          </ion-input>
+        </div>
+
+        <div class="input-group">
+          <ion-label position="stacked">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            Confirmar Contraseña
+          </ion-label>
+          <ion-input 
+            type="password" 
+            [(ngModel)]="confirmPassword"
+            placeholder="Repite la contraseña"
+            fill="outline"
+            class="custom-input">
+          </ion-input>
+        </div>
+
+        <div class="password-requirements">
+          <ion-text color="medium">
+            <small>
+              <ion-icon name="information-circle-outline"></ion-icon>
+              La contraseña debe tener al menos 6 caracteres
+            </small>
+          </ion-text>
+        </div>
+
+        <ion-button 
+          expand="block" 
+          (click)="register()" 
+          class="ion-margin-top"
+          size="large"
+          color="success">
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          Crear Cuenta
+        </ion-button>
+
+        <div class="login-link">
+          <ion-text color="medium">
+            ¿Ya tienes cuenta?
+          </ion-text>
+          <ion-button 
+            fill="clear" 
+            (click)="goToLogin()"
+            size="small">
+            Inicia sesión aquí
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,0 +1,217 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/products"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="person-circle"></ion-icon>
+      Mi Perfil
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="profile-container" *ngIf="user">
+    <!-- Header con avatar -->
+    <div class="profile-header">
+      <div class="avatar-container" (click)="changeProfilePicture()">
+        <ion-avatar class="large-avatar">
+          <img [src]="user.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'" 
+               alt="Foto de perfil">
+        </ion-avatar>
+        <div class="avatar-overlay">
+          <ion-icon name="camera"></ion-icon>
+        </div>
+      </div>
+      
+      <div class="profile-info">
+        <h2 *ngIf="!isEditing">{{ user.displayName }}</h2>
+        <p class="email">
+          <ion-icon name="mail"></ion-icon>
+          {{ user.email }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Card de información personal -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <div class="card-header-content">
+          <ion-card-title>
+            <ion-icon name="person-outline"></ion-icon>
+            Información Personal
+          </ion-card-title>
+          <ion-button 
+            fill="clear" 
+            size="small"
+            (click)="toggleEdit()"
+            *ngIf="!isEditing">
+            <ion-icon name="create" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label position="stacked">
+            <ion-icon name="person"></ion-icon>
+            Nombre Completo
+          </ion-label>
+          <ion-input 
+            [(ngModel)]="displayName"
+            [readonly]="!isEditing"
+            placeholder="Tu nombre"
+            [class.editing]="isEditing">
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">
+            <ion-icon name="mail"></ion-icon>
+            Email
+          </ion-label>
+          <ion-input 
+            [value]="user.email"
+            readonly
+            disabled
+            class="disabled-input">
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">
+            <ion-icon name="call"></ion-icon>
+            Teléfono
+          </ion-label>
+          <ion-input 
+            [(ngModel)]="phoneNumber"
+            [readonly]="!isEditing"
+            type="tel"
+            placeholder="+57 123 456 7890"
+            [class.editing]="isEditing">
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">
+            <ion-icon name="location"></ion-icon>
+            Dirección
+          </ion-label>
+          <ion-textarea 
+            [(ngModel)]="address"
+            [readonly]="!isEditing"
+            rows="2"
+            placeholder="Tu dirección completa"
+            [class.editing]="isEditing">
+          </ion-textarea>
+        </ion-item>
+
+        <div *ngIf="isEditing" class="action-buttons">
+          <ion-button 
+            expand="block" 
+            (click)="saveProfile()"
+            color="success">
+            <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+            Guardar Cambios
+          </ion-button>
+
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            (click)="toggleEdit()"
+            color="medium">
+            <ion-icon name="close-circle" slot="start"></ion-icon>
+            Cancelar
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card de estadísticas -->
+    <ion-card class="stats-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          Estadísticas
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <ion-icon name="cart" color="primary"></ion-icon>
+            <div class="stat-info">
+              <h3>0</h3>
+              <p>Compras</p>
+            </div>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="heart" color="danger"></ion-icon>
+            <div class="stat-info">
+              <h3>0</h3>
+              <p>Favoritos</p>
+            </div>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <div class="stat-info">
+              <h3>0</h3>
+              <p>Reseñas</p>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de opciones -->
+    <ion-list class="options-list">
+      <ion-list-header>
+        <ion-label>Opciones</ion-label>
+      </ion-list-header>
+
+      <ion-item button (click)="goToProducts()" detail>
+        <ion-icon name="storefront" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h3>Ver Productos</h3>
+          <p>Explorar el catálogo</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button (click)="changeProfilePicture()" detail>
+        <ion-icon name="camera" slot="start" color="success"></ion-icon>
+        <ion-label>
+          <h3>Cambiar Foto</h3>
+          <p>Actualizar foto de perfil</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button detail>
+        <ion-icon name="shield-checkmark" slot="start" color="warning"></ion-icon>
+        <ion-label>
+          <h3>Seguridad</h3>
+          <p>Cambiar contraseña</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button detail>
+        <ion-icon name="notifications" slot="start" color="tertiary"></ion-icon>
+        <ion-label>
+          <h3>Notificaciones</h3>
+          <p>Gestionar preferencias</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button (click)="logout()" detail>
+        <ion-icon name="log-out" slot="start" color="danger"></ion-icon>
+        <ion-label>
+          <h3>Cerrar Sesión</h3>
+          <p>Salir de la aplicación</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
