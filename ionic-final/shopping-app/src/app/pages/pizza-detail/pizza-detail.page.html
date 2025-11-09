@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/pizzas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{pizza?.name || 'Pizza'}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="pizza">
+  <img [src]="pizza.imageUrl" [alt]="pizza.name">
+  <div style="padding: 20px;">
+    <h1>{{pizza.name}}</h1>
+    <p>{{pizza.description}}</p>
+    <h2>${{pizza.basePrice.toFixed(2)}}</h2>
+  </div>
+</ion-content>

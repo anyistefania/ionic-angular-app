@@ -1,0 +1,126 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cart"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Checkout</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Resumen del Pedido -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen del Pedido</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let item of cartItems">
+          <ion-label>
+            <h3>{{item.type === 'custom-pizza' ? 'Pizza Personalizada' : (item.item as any).name}}</h3>
+            <p>{{item.quantity}} x ${{item.unitPrice.toFixed(2)}}</p>
+          </ion-label>
+          <ion-note slot="end">${{item.subtotal.toFixed(2)}}</ion-note>
+        </ion-item>
+      </ion-list>
+
+      <ion-item lines="none">
+        <ion-label>Subtotal</ion-label>
+        <ion-note slot="end">${{subtotal.toFixed(2)}}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Delivery</ion-label>
+        <ion-note slot="end">${{deliveryFee.toFixed(2)}}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label><strong>Total</strong></ion-label>
+        <ion-note slot="end"><strong>${{total.toFixed(2)}}</strong></ion-note>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Dirección de Entrega -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Dirección de Entrega</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="addressForm">
+        <ion-item>
+          <ion-label position="floating">Calle y Número</ion-label>
+          <ion-input formControlName="street" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Ciudad</ion-label>
+          <ion-input formControlName="city" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Departamento/Estado</ion-label>
+          <ion-input formControlName="state" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Código Postal</ion-label>
+          <ion-input formControlName="zipCode" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">País</ion-label>
+          <ion-input formControlName="country" type="text"></ion-input>
+        </ion-item>
+      </form>
+
+      <ion-button expand="block" (click)="calculateDelivery()" [disabled]="!addressForm.valid">
+        <ion-icon name="location" slot="start"></ion-icon>
+        Calcular Costo de Envío
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Clima -->
+  <ion-card *ngIf="weather">
+    <ion-card-header>
+      <ion-card-subtitle>Condiciones Climáticas</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="weather-info">
+        <img [src]="weather.icon" alt="weather icon">
+        <div>
+          <h3>{{weather.temperature}}°C</h3>
+          <p>{{weather.description}}</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Método de Pago -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Método de Pago</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-segment [(ngModel)]="paymentMethod" (ionChange)="changePaymentMethod($event.detail.value!)">
+        <ion-segment-button value="mock">
+          <ion-label>Tarjeta (Mock)</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="paypal">
+          <ion-label>PayPal</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <!-- PayPal Button Container -->
+      <div *ngIf="paymentMethod === 'paypal'" id="paypal-button-container" class="paypal-container"></div>
+
+      <!-- Mock Payment Button -->
+      <div *ngIf="paymentMethod === 'mock'" class="mock-payment">
+        <p class="ion-text-center">
+          <ion-text color="warning">
+            <small>Pago simulado para desarrollo</small>
+          </ion-text>
+        </p>
+        <ion-button expand="block" color="primary" (click)="processMockPayment()" [disabled]="!deliveryAddress">
+          <ion-icon name="card" slot="start"></ion-icon>
+          Pagar Ahora
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

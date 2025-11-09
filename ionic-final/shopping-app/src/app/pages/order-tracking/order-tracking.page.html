@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/orders"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Seguimiento de Orden</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="order">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Orden #{{order.id?.slice(0,8)}}</ion-card-subtitle>
+      <ion-card-title>Estado: {{order.status}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Total:</strong> ${{order.total.toFixed(2)}}</p>
+      <p><strong>Dirección:</strong> {{order.deliveryAddress.street}}, {{order.deliveryAddress.city}}</p>
+      <div id="map" style="width: 100%; height: 300px; background: #eee; margin-top: 16px;">
+        Mapa de entrega (requiere Google Maps API)
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
