@@ -12,7 +12,7 @@
     <ion-item *ngFor="let order of orders" [routerLink]="['/order-tracking', order.id]">
       <ion-label>
         <h2>Orden #{{order.id?.slice(0,8)}}</h2>
-        <p>{{order.createdAt.toDate() | date:'short'}}</p>
+        <p>{{getOrderDate(order) | date:'short'}}</p>
         <p>${{order.total.toFixed(2)}} - {{order.status}}</p>
       </ion-label>
     </ion-item>

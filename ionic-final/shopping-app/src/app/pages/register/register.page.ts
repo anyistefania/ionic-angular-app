@@ -7,9 +7,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
-  styleUrls: ['./register.page.scss'],
-    standalone:false
-
+  styleUrls: ['./register.page.scss']
 })
 export class RegisterPage {
   displayName: string = '';

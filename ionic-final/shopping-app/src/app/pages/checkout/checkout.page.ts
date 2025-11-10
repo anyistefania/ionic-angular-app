@@ -130,10 +130,12 @@ export class CheckoutPage implements OnInit, AfterViewInit {
     }
   }
 
-  changePaymentMethod(method: 'paypal' | 'mock') {
-    this.paymentMethod = method;
-    if (method === 'paypal') {
-      setTimeout(() => this.initPayPal(), 100);
+  changePaymentMethod(method: string | undefined) {
+    if (method === 'paypal' || method === 'mock') {
+      this.paymentMethod = method;
+      if (method === 'paypal') {
+        setTimeout(() => this.initPayPal(), 100);
+      }
     }
   }
 
@@ -254,5 +256,15 @@ export class CheckoutPage implements OnInit, AfterViewInit {
       status: 'pending',
       createdAt: new Date()
     };
+  }
+
+  getItemName(item: CartItem): string {
+    if (item.type === 'custom-pizza') {
+      return 'Pizza Personalizada';
+    } else if (item.type === 'predefined-pizza') {
+      return (item.item as any).name;
+    } else {
+      return (item.item as any).name;
+    }
   }
 }
