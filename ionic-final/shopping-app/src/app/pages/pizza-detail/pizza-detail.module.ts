@@ -10,7 +10,9 @@ import { PizzaDetailPage } from './pizza-detail.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    PizzaDetailPageRoutingModule,
+    PizzaDetailPageRoutingModule
+  ],
+  declarations: [
     PizzaDetailPage
   ]
 })

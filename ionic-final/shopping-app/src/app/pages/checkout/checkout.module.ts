@@ -11,7 +11,9 @@ import { CheckoutPage } from './checkout.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    CheckoutPageRoutingModule,
+    CheckoutPageRoutingModule
+  ],
+  declarations: [
     CheckoutPage
   ]
 })

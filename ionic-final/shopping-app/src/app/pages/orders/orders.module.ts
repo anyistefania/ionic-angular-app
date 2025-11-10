@@ -10,7 +10,9 @@ import { OrdersPage } from './orders.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    OrdersPageRoutingModule,
+    OrdersPageRoutingModule
+  ],
+  declarations: [
     OrdersPage
   ]
 })

@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { User } from '../../models/models.model';
@@ -9,9 +7,7 @@ import { User } from '../../models/models.model';
 @Component({
   selector: 'app-shared-header',
   templateUrl: './shared-header.component.html',
-  styleUrls: ['./shared-header.component.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule]
+  styleUrls: ['./shared-header.component.scss']
 })
 export class SharedHeaderComponent implements OnInit {
   @Input() title: string = 'MakePizza';

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { PizzasPageRoutingModule } from './pizzas-routing.module';
 import { PizzasPage } from './pizzas.page';
-import { SharedHeaderComponent } from '../../components/shared-header/shared-header.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -12,7 +12,9 @@ import { SharedHeaderComponent } from '../../components/shared-header/shared-hea
     FormsModule,
     IonicModule,
     PizzasPageRoutingModule,
-    SharedHeaderComponent,
+    SharedModule
+  ],
+  declarations: [
     PizzasPage
   ]
 })
