@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
          signOut, updateProfile, User as FirebaseUser, onAuthStateChanged } from '@angular/fire/auth';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -10,16 +10,16 @@ import { FirestoreService } from './firestore.service';
   providedIn: 'root'
 })
 export class AuthService {
+  private auth: Auth = inject(Auth);
+  private router: Router = inject(Router);
+  private firestoreService: FirestoreService = inject(FirestoreService);
+
   private currentUserSubject = new BehaviorSubject<FirebaseUser | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private userDataSubject = new BehaviorSubject<User | null>(null);
   public userData$ = this.userDataSubject.asObservable();
 
-  constructor(
-    private auth: Auth,
-    private router: Router,
-    private firestoreService: FirestoreService
-  ) {
+  constructor() {
     // Observar cambios en el estado de autenticación
     onAuthStateChanged(this.auth, async (user) => {
       this.currentUserSubject.next(user);

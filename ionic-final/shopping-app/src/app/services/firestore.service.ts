@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc,
          updateDoc, deleteDoc, setDoc, query, where, orderBy, limit } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -9,11 +9,10 @@ import { Product, User, Pizza, Ingredient, Drink, Order, StoreConfig } from '../
   providedIn: 'root'
 })
 export class FirestoreService {
-
-  constructor(private firestore: Firestore) {}
+  private firestore: Firestore = inject(Firestore);
 
   // ============== PRODUCTOS ==============
-  
+
   // Obtener todos los productos
   getProducts(): Observable<Product[]> {
     const productsRef = collection(this.firestore, 'products');
