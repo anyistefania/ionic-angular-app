@@ -10,6 +10,7 @@ import { FirestoreService } from '../../services/firestore.service';
   selector: 'app-custom-pizza',
   templateUrl: './custom-pizza.page.html',
   styleUrls: ['./custom-pizza.page.scss'],
+  standalone: false,
 })
 export class CustomPizzaPage implements OnInit {
   sizes: PizzaSize[] = [];
@@ -21,12 +22,12 @@ export class CustomPizzaPage implements OnInit {
   extras: Ingredient[] = [];
 
   customPizza: CustomPizza = {
-    size: null as any,
-    base: null as any,
+    size: null as any, // ✅ Cambio: null as any → undefined
+    base: null as any, // ✅ Cambio: null as any → undefined
     cheese: undefined,
     sauce: undefined,
     toppings: [],
-    totalPrice: 0
+    totalPrice: 0,
   };
 
   currentStep: number = 1;
@@ -47,10 +48,13 @@ export class CustomPizzaPage implements OnInit {
     this.loadIngredients();
   }
 
-  loadIngredients() {
-    this.loading = true;
+// En custom-pizza.page.ts
+loadIngredients() {
+  this.loading = true;
 
-    this.firestoreService.getIngredients().subscribe(ingredients => {
+  this.firestoreService.getIngredients().subscribe({
+    next: (ingredients) => {
+      console.log('✅ Ingredientes cargados:', ingredients);
       this.bases = ingredients.filter(i => i.category === 'base');
       this.cheeses = ingredients.filter(i => i.category === 'cheese');
       this.sauces = ingredients.filter(i => i.category === 'sauce');
@@ -58,8 +62,14 @@ export class CustomPizzaPage implements OnInit {
       this.vegetables = ingredients.filter(i => i.category === 'vegetable');
       this.extras = ingredients.filter(i => i.category === 'extra');
       this.loading = false;
-    });
-  }
+    },
+    error: (error) => {
+      console.error('❌ Error loading ingredients:', error);
+      this.showToast('Error al cargar ingredientes. Revisa la consola.', 'danger');
+      this.loading = false;
+    }
+  });
+}
 
   selectSize(size: PizzaSize) {
     this.customPizza.size = size;
@@ -73,10 +83,13 @@ export class CustomPizzaPage implements OnInit {
     this.nextStep();
   }
 
-  selectCheese(cheese: Ingredient) {
-    this.customPizza.cheese = cheese;
-    this.calculatePrice();
-  }
+
+  selectCheese(cheese: any) {
+  this.customPizza.cheese = cheese;
+    this.calculatePrice(); // ✅ Aquí sí está
+
+  // Remover esta línea si existe: this.nextStep();
+}
 
   selectSauce(sauce: Ingredient) {
     this.customPizza.sauce = sauce;
@@ -85,12 +98,14 @@ export class CustomPizzaPage implements OnInit {
   }
 
   toggleTopping(topping: Ingredient) {
-    const index = this.customPizza.toppings.findIndex(t => t.id === topping.id);
+    const index = this.customPizza.toppings.findIndex(
+      (t) => t.id === topping.id
+    );
 
     if (index > -1) {
       this.customPizza.toppings.splice(index, 1);
     } else {
-      if (this.customPizza.toppings.length >= 10) {
+      if (this.customPizza.toppings.length >= 1) {
         this.showToast('Máximo 10 ingredientes permitidos', 'warning');
         return;
       }
@@ -100,15 +115,25 @@ export class CustomPizzaPage implements OnInit {
     this.calculatePrice();
   }
 
+
+
   isToppingSelected(topping: Ingredient): boolean {
-    return this.customPizza.toppings.some(t => t.id === topping.id);
+    return this.customPizza.toppings.some((t) => t.id === topping.id);
   }
 
   calculatePrice() {
     if (this.customPizza.size && this.customPizza.base) {
-      this.customPizza.totalPrice = this.pizzaService.calculateCustomPizzaPrice(this.customPizza);
+      this.customPizza.totalPrice = this.pizzaService.calculateCustomPizzaPrice(
+        this.customPizza
+      );
     }
   }
+
+  skipCheese() {
+  this.customPizza.cheese = undefined; // o undefined
+  this.nextStep();
+}
+
 
   nextStep() {
     if (this.currentStep < this.totalSteps) {
@@ -133,13 +158,16 @@ export class CustomPizzaPage implements OnInit {
       const alert = await this.alertController.create({
         header: 'Pizza Incompleta',
         message: validation.errors.join('<br>'),
-        buttons: ['OK']
+        buttons: ['OK'],
       });
       await alert.present();
       return;
     }
 
-    const cartItem = this.pizzaService.createCustomPizzaCartItem(this.customPizza, 1);
+    const cartItem = this.pizzaService.createCustomPizzaCartItem(
+      this.customPizza,
+      1
+    );
     this.cartService.addItem(cartItem);
 
     await this.showToast('Pizza personalizada agregada al carrito', 'success');
@@ -153,7 +181,7 @@ export class CustomPizzaPage implements OnInit {
       cheese: undefined,
       sauce: undefined,
       toppings: [],
-      totalPrice: 0
+      totalPrice: 0,
     };
     this.currentStep = 1;
   }
@@ -163,9 +191,9 @@ export class CustomPizzaPage implements OnInit {
       message: message,
       duration: 2000,
       position: 'bottom',
-      color: color
+      color: color,
     });
-    toast.present();
+    await toast.present();
   }
 
   getStepStatus(step: number): string {
@@ -173,4 +201,6 @@ export class CustomPizzaPage implements OnInit {
     if (step === this.currentStep) return 'active';
     return 'inactive';
   }
+
+
 }

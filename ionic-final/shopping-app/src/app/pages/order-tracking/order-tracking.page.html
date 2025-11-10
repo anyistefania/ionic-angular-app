@@ -16,9 +16,16 @@
     <ion-card-content>
       <p><strong>Total:</strong> ${{order.total.toFixed(2)}}</p>
       <p><strong>Dirección:</strong> {{order.deliveryAddress.street}}, {{order.deliveryAddress.city}}</p>
-      <div id="map" style="width: 100%; height: 300px; background: #eee; margin-top: 16px;">
-        Mapa de entrega (requiere Google Maps API)
-      </div>
+
+      <!-- Mapa -->
+      <div #map id="map" style="width: 100%; height: 300px; margin-top: 16px; border-radius: 8px;"></div>
+
+      <ion-item lines="none" *ngIf="order.deliveryPerson">
+        <ion-icon name="bicycle" slot="start"></ion-icon>
+        <ion-label>
+          <h3>Repartidor: {{order.deliveryPerson.name}}</h3>
+        </ion-label>
+      </ion-item>
     </ion-card-content>
   </ion-card>
 </ion-content>

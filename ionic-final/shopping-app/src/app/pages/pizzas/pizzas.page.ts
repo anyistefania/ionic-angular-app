@@ -10,6 +10,7 @@ import { FirestoreService } from '../../services/firestore.service';
   selector: 'app-pizzas',
   templateUrl: './pizzas.page.html',
   styleUrls: ['./pizzas.page.scss'],
+  standalone: false,
 })
 export class PizzasPage implements OnInit {
   pizzas: Pizza[] = [];
@@ -40,7 +41,7 @@ export class PizzasPage implements OnInit {
     this.loading = true;
 
     // Cargar todas las pizzas
-    this.firestoreService.getPizzas().subscribe(pizzas => {
+    this.firestoreService.getPizzas().subscribe((pizzas) => {
       this.pizzas = pizzas;
       this.filteredPizzas = pizzas;
       this.extractCategories();
@@ -48,7 +49,7 @@ export class PizzasPage implements OnInit {
     });
 
     // Cargar pizzas populares
-    this.firestoreService.getPopularPizzas().subscribe(pizzas => {
+    this.firestoreService.getPopularPizzas().subscribe((pizzas) => {
       this.popularPizzas = pizzas;
     });
   }
@@ -60,7 +61,7 @@ export class PizzasPage implements OnInit {
   }
 
   extractCategories() {
-    const cats = new Set(this.pizzas.map(p => p.category));
+    const cats = new Set(this.pizzas.map((p) => p.category));
     this.categories = ['Todas', ...Array.from(cats)];
   }
 
@@ -69,7 +70,7 @@ export class PizzasPage implements OnInit {
     if (category === 'Todas') {
       this.filteredPizzas = this.pizzas;
     } else {
-      this.filteredPizzas = this.pizzas.filter(p => p.category === category);
+      this.filteredPizzas = this.pizzas.filter((p) => p.category === category);
     }
   }
 
@@ -82,16 +83,19 @@ export class PizzasPage implements OnInit {
     const alert = await this.alertController.create({
       header: `Agregar ${pizza.name}`,
       message: 'Selecciona el tamaño:',
-      inputs: this.sizes.map(size => ({
+      cssClass: 'custom-alert', // Agregar esta línea
+      inputs: this.sizes.map((size) => ({
         type: 'radio' as const,
-        label: `${size.name} - $${(pizza.basePrice * size.priceMultiplier).toFixed(2)}`,
+        label: `${size.name} - $${(
+          pizza.basePrice * size.priceMultiplier
+        ).toFixed(2)}`,
         value: size,
-        checked: size.id === 'medium'
+        checked: size.id === 'medium',
       })),
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Agregar',
@@ -105,9 +109,9 @@ export class PizzasPage implements OnInit {
               this.cartService.addItem(cartItem);
               this.showToast(`${pizza.name} agregada al carrito`);
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
 
     await alert.present();
@@ -130,7 +134,7 @@ export class PizzasPage implements OnInit {
       message: message,
       duration: 2000,
       position: 'bottom',
-      color: 'success'
+      color: 'success',
     });
     toast.present();
   }

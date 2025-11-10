@@ -103,16 +103,17 @@ export interface PaymentInfo {
 
 // Estado de la orden
 export type OrderStatus =
-  | 'pending'           // Pedido creado, esperando pago
-  | 'paid'              // Pago confirmado
-  | 'preparing'         // Preparando la pizza
-  | 'ready'             // Lista para entrega
-  | 'in-delivery'       // En camino
-  | 'delivered'         // Entregada
-  | 'cancelled';        // Cancelada
+  | 'pending' // Pedido creado, esperando pago
+  | 'paid' // Pago confirmado
+  | 'preparing' // Preparando la pizza
+  | 'ready' // Lista para entrega
+  | 'in-delivery' // En camino
+  | 'delivered' // Entregada
+  | 'cancelled'; // Cancelada
 
 // Orden de pizza
 export interface Order {
+  deliveryPerson: any;
   id?: string;
   userId: string;
   userName: string;

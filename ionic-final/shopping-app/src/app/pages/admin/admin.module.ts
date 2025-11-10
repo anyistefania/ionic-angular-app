@@ -10,10 +10,12 @@ import { AdminPage } from './admin.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    AdminPageRoutingModule
+    AdminPageRoutingModule,
+
   ],
   declarations: [
     AdminPage
+
   ]
 })
 export class AdminPageModule {}

@@ -19,7 +19,7 @@ export interface RouteInfo {
 })
 export class MapsService {
   private googleMapsLoaded = false;
-  private apiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Reemplazar con API key real
+  private apiKey = 'AIzaSyB2ka2icZ5J-43Y2jF1wPRzhYUNiBLyqrU'; // Reemplazar con API key real
 
   // Ubicación de la tienda (fábrica de pizza)
   private storeLocation: MapLocation = {

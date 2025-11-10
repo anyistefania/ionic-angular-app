@@ -14,7 +14,7 @@ export interface PayPalConfig {
 })
 export class PaymentService {
   private paypalConfig: PayPalConfig = {
-    clientId: 'YOUR_PAYPAL_CLIENT_ID', // Reemplazar con Client ID real
+    clientId: 'AZSr6dXWyGX4Q_yAqpNjHA_dsrFWAUPfQvpj4JlDeZql5blp2y9Zt_MYMZj8oqMS-6jLMEUFDj6ijgi_', // Reemplazar con Client ID real
     currency: 'USD',
     env: 'sandbox' // Cambiar a 'production' para producción
   };

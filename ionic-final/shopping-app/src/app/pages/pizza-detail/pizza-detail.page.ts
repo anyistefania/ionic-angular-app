@@ -7,6 +7,7 @@ import { FirestoreService } from '../../services/firestore.service';
   selector: 'app-pizza-detail',
   templateUrl: './pizza-detail.page.html',
   styleUrls: ['./pizza-detail.page.scss'],
+   standalone:false
 })
 export class PizzaDetailPage implements OnInit {
   pizza: Pizza | null = null;

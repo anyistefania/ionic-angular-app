@@ -7,7 +7,8 @@ import { AlertController, LoadingController } from '@ionic/angular';
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
-  styleUrls: ['./register.page.scss']
+  styleUrls: ['./register.page.scss'],
+   standalone:false
 })
 export class RegisterPage {
   displayName: string = '';
@@ -47,7 +48,7 @@ export class RegisterPage {
 
     // Registrar usuario
     const result = await this.authService.register(this.email, this.password, this.displayName);
-    
+
     if (result.success) {
       // Guardar datos adicionales en Firestore
       await this.firestoreService.saveUserData(result.user.uid, {

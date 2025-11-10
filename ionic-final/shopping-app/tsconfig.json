@@ -19,9 +19,10 @@
     "target": "es2022",
     "module": "es2020",
     "lib": [
-      "es2018", 
+      "es2018",
       "dom"
     ],
+     "types": ["google.maps"],
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
@@ -30,4 +31,5 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   }
+
 }

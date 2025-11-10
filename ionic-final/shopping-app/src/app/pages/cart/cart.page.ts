@@ -8,7 +8,8 @@ import { PizzaService } from '../../services/pizza.service';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
-  styleUrls: ['./cart.page.scss']
+  styleUrls: ['./cart.page.scss'],
+  standalone:false
 })
 export class CartPage implements OnInit {
   cartItems: CartItem[] = [];
@@ -49,7 +50,7 @@ export class CartPage implements OnInit {
 
   getItemImage(item: CartItem): string {
     if (item.type === 'custom-pizza') {
-      return 'assets/custom-pizza.jpg';
+      return 'assets/custom-pizza.png';
     } else if (item.type === 'predefined-pizza') {
       return (item.item as Pizza).imageUrl;
     } else {

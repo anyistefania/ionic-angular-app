@@ -7,7 +7,8 @@ import { User } from '../../models/models.model';
 @Component({
   selector: 'app-shared-header',
   templateUrl: './shared-header.component.html',
-  styleUrls: ['./shared-header.component.scss']
+  styleUrls: ['./shared-header.component.scss'],
+   standalone:false
 })
 export class SharedHeaderComponent implements OnInit {
   @Input() title: string = 'MakePizza';
