@@ -1,5 +1,5 @@
 ion-content {
-  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background: #fff8e7;
 }
 
 .login-container {
@@ -14,11 +14,12 @@ ion-content {
 .logo-section {
   text-align: center;
   margin-bottom: 2rem;
-  color: white;
+  color: #2c3e50;
 
   .logo-icon {
     font-size: 80px;
     margin-bottom: 1rem;
+    color: #ea668e;
   }
 
   h1 {
@@ -29,15 +30,16 @@ ion-content {
 
   p {
     font-size: 1rem;
-    opacity: 0.9;
+    opacity: 0.8;
     margin-top: 0.5rem;
   }
 }
 
 ion-card {
   border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   margin: 0;
+  background: #ffffff;
 }
 
 ion-card-content {
@@ -73,14 +75,14 @@ ion-button {
   align-items: center;
   text-align: center;
   margin: 1.5rem 0;
-  
+
   &::before,
   &::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid #e1e8ed;
   }
-  
+
   span {
     padding: 0 1rem;
     color: var(--ion-color-medium);
@@ -102,6 +104,54 @@ ion-button {
 
     h1 {
       font-size: 1.5rem;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: #2d1f1a;
+  }
+
+  .logo-section {
+    color: #f4f5f8;
+
+    .logo-icon {
+      color: #ea668e;
+    }
+
+    p {
+      opacity: 0.9;
+    }
+  }
+
+
+  ion-card {
+    background: #3a2d28;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  ion-item {
+    --border-color: #4a3d38;
+  }
+.custom-input {
+  --border-color: #e0e0e0; // Color normal
+
+  &:hover {
+    --border-color: #ea668e; // Color al pasar el mouse
+  }
+
+  &.has-focus,
+  &.ion-focused {
+    --border-color: #ea668e; // Color cuando está activo/enfocado
+    --highlight-color: #ea668e; // Color de la línea inferior (si aplica)
+  }
+}
+  .divider {
+    &::before,
+    &::after {
+      border-bottom-color: #4a3d38;
     }
   }
 }

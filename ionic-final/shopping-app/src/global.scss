@@ -16,15 +16,16 @@
 
 // Variables de colores personalizadas
 :root {
-  --app-primary: #667eea;
+  --app-primary: #ea668e;
   --app-primary-dark: #5568d3;
   --app-secondary: #764ba2;
   --app-success: #10ac84;
   --app-danger: #ff4757;
   --app-warning: #ffa502;
   --app-dark: #2c3e50;
-  --app-light: #f5f6fa;
+  --app-light: #fff8e7;
   --app-medium: #6c757d;
+  --app-background: #fff8e7;
 }
 
 // Scrollbar personalizado
@@ -100,7 +101,7 @@ ion-button {
   --border-radius: 10px;
   text-transform: none;
   font-weight: 600;
-  
+
   &.button-block {
     margin: 0.5rem 0;
   }
@@ -111,7 +112,7 @@ ion-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 1rem;
-  
+
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
@@ -122,7 +123,7 @@ ion-item {
   --padding-start: 1rem;
   --padding-end: 1rem;
   --min-height: 60px;
-  
+
   ion-icon {
     margin-right: 1rem;
   }
@@ -131,7 +132,7 @@ ion-item {
 // Lista mejorada
 ion-list {
   background: transparent;
-  
+
   ion-list-header {
     font-weight: 600;
     font-size: 1rem;
@@ -159,7 +160,7 @@ ion-badge {
 ion-toolbar {
   --padding-start: 0.5rem;
   --padding-end: 0.5rem;
-  
+
   ion-title {
     font-weight: 600;
   }
@@ -169,7 +170,7 @@ ion-toolbar {
 ion-loading {
   --background: rgba(0, 0, 0, 0.8);
   --spinner-color: #fff;
-  
+
   .loading-wrapper {
     border-radius: 12px;
   }
@@ -180,7 +181,7 @@ ion-alert {
   .alert-wrapper {
     border-radius: 12px;
   }
-  
+
   .alert-button {
     text-transform: none;
     font-weight: 600;
@@ -190,7 +191,7 @@ ion-alert {
 // Fab personalizado
 ion-fab-button {
   --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  
+
   &:hover {
     transform: scale(1.1);
   }
@@ -238,7 +239,50 @@ ion-toast {
 // Dark mode support
 @media (prefers-color-scheme: dark) {
   :root {
-    --app-light: #1e1e1e;
+    --app-light: #2d1f1a;
     --app-dark: #f5f6fa;
+    --app-background: #2d1f1a;
   }
+
+   h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+  }
+
+  ion-card-title{
+    color: #ffffff !important;
+  }
+}
+
+.custom-alert {
+  // Modo oscuro
+  @media (prefers-color-scheme: dark) {
+    .alert-message {
+      color: #ffffff !important;
+    }
+
+    .alert-head h2 {
+      color: #ffffff !important;
+    }
+
+    .alert-radio-label {
+      color: #ffffff !important;
+    }
+  }
+
+  // Modo claro (opcional)
+  @media (prefers-color-scheme: light) {
+    .alert-message {
+      color: #000000 !important;
+    }
+
+    .alert-head h2 {
+      color: #000000 !important;
+    }
+
+    .alert-radio-label {
+      color: #000000 !important;
+    }
+  }
+
+
 }

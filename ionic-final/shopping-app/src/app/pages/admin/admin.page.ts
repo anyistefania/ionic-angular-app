@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-admin',
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
+  standalone:false
 })
 export class AdminPage implements OnInit {
   isAdmin: boolean = false;

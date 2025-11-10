@@ -7,8 +7,8 @@
 <ion-content class="ion-padding">
   <div class="login-container">
     <div class="logo-section">
-      <ion-icon name="cart" class="logo-icon"></ion-icon>
-      <h1>Shopping App</h1>
+      <img src="assets/logo.png" width="200" alt="Make Pizza Logo" class="logo" />
+      <h1>Make Pizza</h1>
       <p>Bienvenido de nuevo</p>
     </div>
 
@@ -19,8 +19,8 @@
             <ion-icon name="mail-outline"></ion-icon>
             Email
           </ion-label>
-          <ion-input 
-            type="email" 
+          <ion-input
+            type="email"
             [(ngModel)]="email"
             placeholder="tu@email.com"
             fill="outline"
@@ -33,8 +33,8 @@
             <ion-icon name="lock-closed-outline"></ion-icon>
             Contraseña
           </ion-label>
-          <ion-input 
-            type="password" 
+          <ion-input
+            type="password"
             [(ngModel)]="password"
             placeholder="******"
             fill="outline"
@@ -42,9 +42,9 @@
           </ion-input>
         </div>
 
-        <ion-button 
-          expand="block" 
-          (click)="login()" 
+        <ion-button
+          expand="block"
+          (click)="login()"
           class="ion-margin-top"
           size="large">
           <ion-icon name="log-in-outline" slot="start"></ion-icon>
@@ -55,23 +55,27 @@
           <span>o</span>
         </div>
 
-        <ion-button 
-          expand="block" 
-          fill="outline" 
+        <ion-button
+          expand="block"
+          fill="outline"
           (click)="goToRegister()"
           color="medium">
           <ion-icon name="person-add-outline" slot="start"></ion-icon>
           Crear nueva cuenta
         </ion-button>
 
-        <ion-button 
-          expand="block" 
-          fill="clear" 
+        <ion-button
+          expand="block"
+          fill="clear"
           size="small"
           class="ion-margin-top">
           ¿Olvidaste tu contraseña?
         </ion-button>
+              <p class="ion-padding">Hecho por: Linda Cantor, Maria Cardenas, Lorena Sanabria, Brayan Pulecio, Paola Contreras, Paula Casallas, Anyi Becerra</p>
+
       </ion-card-content>
     </ion-card>
+
+
   </div>
 </ion-content>

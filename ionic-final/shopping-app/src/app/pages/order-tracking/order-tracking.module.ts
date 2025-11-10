@@ -10,7 +10,7 @@ import { OrderTrackingPage } from './order-tracking.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    OrderTrackingPageRoutingModule
+    OrderTrackingPageRoutingModule,
   ],
   declarations: [
     OrderTrackingPage

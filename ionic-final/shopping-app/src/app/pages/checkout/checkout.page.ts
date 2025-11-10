@@ -14,6 +14,7 @@ import { WeatherService } from '../../services/weather.service';
   selector: 'app-checkout',
   templateUrl: './checkout.page.html',
   styleUrls: ['./checkout.page.scss'],
+   standalone:false
 })
 export class CheckoutPage implements OnInit, AfterViewInit {
   addressForm: FormGroup;
@@ -77,6 +78,35 @@ export class CheckoutPage implements OnInit, AfterViewInit {
     if (this.paymentMethod === 'paypal') {
       this.initPayPal();
     }
+  }
+
+
+  departments = [
+    'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar',
+    'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca',
+    'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía',
+    'Guaviare', 'Huila', 'La Guajira', 'Magdalena', 'Meta',
+    'Nariño', 'Norte de Santander', 'Putumayo', 'Quindío', 'Risaralda',
+    'San Andrés y Providencia', 'Santander', 'Sucre', 'Tolima',
+    'Valle del Cauca', 'Vaupés', 'Vichada'
+  ];
+
+  // Ciudades por departamento
+  citiesByDepartment: { [key: string]: string[] } = {
+    'Cundinamarca': ['Bogotá', 'Soacha', 'Facatativá', 'Zipaquirá', 'Chía', 'Fusagasugá'],
+    'Antioquia': ['Medellín', 'Bello', 'Itagüí', 'Envigado', 'Rionegro'],
+    'Valle del Cauca': ['Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago'],
+    'Atlántico': ['Barranquilla', 'Soledad', 'Malambo', 'Sabanalarga'],
+    'Santander': ['Bucaramanga', 'Floridablanca', 'Girón', 'Piedecuesta'],
+    // Agrega más según necesites
+  };
+
+  availableCities: string[] = [];
+
+  onDepartmentChange(event: any) {
+    const department = event.detail.value;
+    this.availableCities = this.citiesByDepartment[department] || [];
+    this.addressForm.patchValue({ city: '' }); // Resetear ciudad
   }
 
   async calculateDelivery() {
@@ -254,7 +284,8 @@ export class CheckoutPage implements OnInit, AfterViewInit {
       deliveryFee: this.deliveryFee,
       total: this.total,
       status: 'pending',
-      createdAt: new Date()
+      createdAt: new Date(),
+      deliveryPerson: ''
     };
   }
 

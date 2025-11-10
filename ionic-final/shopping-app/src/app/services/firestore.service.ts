@@ -1,18 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc,
-         updateDoc, deleteDoc, setDoc, query, where, orderBy, limit } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  collectionData,
+  doc,
+  docData,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  query,
+  where,
+  orderBy,
+  limit,
+} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Product, User, Pizza, Ingredient, Drink, Order, StoreConfig } from '../models/models.model';
+import {
+  Product,
+  User,
+  Pizza,
+  Ingredient,
+  Drink,
+  Order,
+  StoreConfig,
+} from '../models/models.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FirestoreService {
-
   constructor(private firestore: Firestore) {}
 
   // ============== PRODUCTOS ==============
-  
+
   // Obtener todos los productos
   getProducts(): Observable<Product[]> {
     const productsRef = collection(this.firestore, 'products');
@@ -32,7 +52,7 @@ export class FirestoreService {
       const productsRef = collection(this.firestore, 'products');
       const newProduct = {
         ...product,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
       const docRef = await addDoc(productsRef, newProduct);
       return { success: true, id: docRef.id };
@@ -112,7 +132,12 @@ export class FirestoreService {
   // Obtener pizzas populares
   getPopularPizzas(): Observable<Pizza[]> {
     const pizzasRef = collection(this.firestore, 'pizzas');
-    const q = query(pizzasRef, where('popular', '==', true), where('available', '==', true), limit(6));
+    const q = query(
+      pizzasRef,
+      where('popular', '==', true),
+      where('available', '==', true),
+      limit(6)
+    );
     return collectionData(q, { idField: 'id' }) as Observable<Pizza[]>;
   }
 
@@ -128,7 +153,7 @@ export class FirestoreService {
       const pizzasRef = collection(this.firestore, 'pizzas');
       const newPizza = {
         ...pizza,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
       const docRef = await addDoc(pizzasRef, newPizza);
       return { success: true, id: docRef.id };
@@ -162,16 +187,21 @@ export class FirestoreService {
   // ============== INGREDIENTES ==============
 
   // Obtener todos los ingredientes
+  // Línea 165-168 - REEMPLAZA ESTO:
   getIngredients(): Observable<Ingredient[]> {
     const ingredientsRef = collection(this.firestore, 'ingredients');
-    const q = query(ingredientsRef, where('available', '==', true), orderBy('category'), orderBy('name'));
-    return collectionData(q, { idField: 'id' }) as Observable<Ingredient[]>;
+    return collectionData(ingredientsRef, { idField: 'id' }) as Observable<
+      Ingredient[]
+    >;
   }
-
   // Obtener ingredientes por categoría
   getIngredientsByCategory(category: string): Observable<Ingredient[]> {
     const ingredientsRef = collection(this.firestore, 'ingredients');
-    const q = query(ingredientsRef, where('category', '==', category), where('available', '==', true));
+    const q = query(
+      ingredientsRef,
+      where('category', '==', category),
+      where('available', '==', true)
+    );
     return collectionData(q, { idField: 'id' }) as Observable<Ingredient[]>;
   }
 
@@ -187,7 +217,10 @@ export class FirestoreService {
   }
 
   // Actualizar ingrediente (solo admin)
-  async updateIngredient(id: string, ingredient: Partial<Ingredient>): Promise<any> {
+  async updateIngredient(
+    id: string,
+    ingredient: Partial<Ingredient>
+  ): Promise<any> {
     try {
       const ingredientRef = doc(this.firestore, `ingredients/${id}`);
       await updateDoc(ingredientRef, ingredient);
@@ -237,7 +270,7 @@ export class FirestoreService {
       const newOrder = {
         ...order,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       const docRef = await addDoc(ordersRef, newOrder);
       return { success: true, id: docRef.id };
@@ -249,7 +282,11 @@ export class FirestoreService {
   // Obtener órdenes de un usuario
   getUserOrders(userId: string): Observable<Order[]> {
     const ordersRef = collection(this.firestore, 'orders');
-    const q = query(ordersRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
+    const q = query(
+      ordersRef,
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
     return collectionData(q, { idField: 'id' }) as Observable<Order[]>;
   }
 
@@ -272,7 +309,7 @@ export class FirestoreService {
       const orderRef = doc(this.firestore, `orders/${orderId}`);
       await updateDoc(orderRef, {
         status: status,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return { success: true };
     } catch (error: any) {
@@ -286,7 +323,7 @@ export class FirestoreService {
       const orderRef = doc(this.firestore, `orders/${orderId}`);
       await updateDoc(orderRef, {
         ...order,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return { success: true };
     } catch (error: any) {

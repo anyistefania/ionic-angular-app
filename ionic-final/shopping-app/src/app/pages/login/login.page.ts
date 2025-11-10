@@ -6,17 +6,21 @@ import { AlertController, LoadingController } from '@ionic/angular';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss']
+  styleUrls: ['./login.page.scss'],
+   standalone:false
 })
 export class LoginPage {
   email: string = '';
   password: string = '';
+    isImporting = false; // Para mostrar un spinner
+
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+
   ) {}
 
   async login() {
@@ -52,4 +56,5 @@ export class LoginPage {
     });
     await alert.present();
   }
+
 }

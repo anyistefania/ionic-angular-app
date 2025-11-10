@@ -8,6 +8,7 @@ import { CartService } from '../../services/cart.service';
   selector: 'app-drinks',
   templateUrl: './drinks.page.html',
   styleUrls: ['./drinks.page.scss'],
+  standalone:false
 })
 export class DrinksPage implements OnInit {
   drinks: Drink[] = [];
