@@ -6,8 +6,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
-  standalone:false
+  styleUrls: ['./login.page.scss']
 })
 export class LoginPage {
   email: string = '';

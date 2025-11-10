@@ -97,20 +97,6 @@
           </ion-input>
         </ion-item>
 
-        <ion-item lines="none">
-          <ion-label position="stacked">
-            <ion-icon name="location"></ion-icon>
-            Dirección
-          </ion-label>
-          <ion-textarea 
-            [(ngModel)]="address"
-            [readonly]="!isEditing"
-            rows="2"
-            placeholder="Tu dirección completa"
-            [class.editing]="isEditing">
-          </ion-textarea>
-        </ion-item>
-
         <div *ngIf="isEditing" class="action-buttons">
           <ion-button 
             expand="block" 
@@ -173,10 +159,10 @@
         <ion-label>Opciones</ion-label>
       </ion-list-header>
 
-      <ion-item button (click)="goToProducts()" detail>
+      <ion-item button (click)="goToPizzas()" detail>
         <ion-icon name="storefront" slot="start" color="primary"></ion-icon>
         <ion-label>
-          <h3>Ver Productos</h3>
+          <h3>Ver Pizzas</h3>
           <p>Explorar el catálogo</p>
         </ion-label>
       </ion-item>

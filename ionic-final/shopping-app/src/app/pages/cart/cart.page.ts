@@ -8,8 +8,7 @@ import { PizzaService } from '../../services/pizza.service';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
-  styleUrls: ['./cart.page.scss'],
-  standalone: false
+  styleUrls: ['./cart.page.scss']
 })
 export class CartPage implements OnInit {
   cartItems: CartItem[] = [];

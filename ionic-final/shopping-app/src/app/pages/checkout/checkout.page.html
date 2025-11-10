@@ -17,7 +17,7 @@
       <ion-list>
         <ion-item *ngFor="let item of cartItems">
           <ion-label>
-            <h3>{{item.type === 'custom-pizza' ? 'Pizza Personalizada' : (item.item as any).name}}</h3>
+            <h3>{{getItemName(item)}}</h3>
             <p>{{item.quantity}} x ${{item.unitPrice.toFixed(2)}}</p>
           </ion-label>
           <ion-note slot="end">${{item.subtotal.toFixed(2)}}</ion-note>

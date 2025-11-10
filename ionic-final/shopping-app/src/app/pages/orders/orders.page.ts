@@ -24,4 +24,13 @@ export class OrdersPage implements OnInit {
       });
     }
   }
+
+  getOrderDate(order: Order): Date {
+    if (order.createdAt instanceof Date) {
+      return order.createdAt;
+    } else if (order.createdAt && typeof (order.createdAt as any).toDate === 'function') {
+      return (order.createdAt as any).toDate();
+    }
+    return new Date();
+  }
 }

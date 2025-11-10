@@ -9,9 +9,7 @@ import { Product } from 'src/app/models/models.model';
 @Component({
   selector: 'app-products',
   templateUrl: './products.page.html',
-  styleUrls: ['./products.page.scss'],
-    standalone:false
-
+  styleUrls: ['./products.page.scss']
 })
 export class ProductsPage implements OnInit {
   products: Product[] = [];

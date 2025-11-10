@@ -8,8 +8,7 @@ import { User } from '../../models/models.model';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss'],
-  standalone: false
+  styleUrls: ['./profile.page.scss']
 })
 export class ProfilePage implements OnInit {
   user: User | null = null;
