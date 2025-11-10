@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc,
          updateDoc, deleteDoc, setDoc, query, where, orderBy, limit } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Product, User, Pizza, Ingredient, Drink, Order, StoreConfig } from '../models/models.model';
 
 @Injectable({
@@ -105,8 +106,10 @@ export class FirestoreService {
   // Obtener todas las pizzas
   getPizzas(): Observable<Pizza[]> {
     const pizzasRef = collection(this.firestore, 'pizzas');
-    const q = query(pizzasRef, where('available', '==', true), orderBy('name'));
-    return collectionData(q, { idField: 'id' }) as Observable<Pizza[]>;
+    const q = query(pizzasRef, where('available', '==', true));
+    return (collectionData(q, { idField: 'id' }) as Observable<Pizza[]>).pipe(
+      map((pizzas: Pizza[]) => pizzas.sort((a, b) => a.name.localeCompare(b.name)))
+    );
   }
 
   // Obtener pizzas populares
@@ -164,8 +167,19 @@ export class FirestoreService {
   // Obtener todos los ingredientes
   getIngredients(): Observable<Ingredient[]> {
     const ingredientsRef = collection(this.firestore, 'ingredients');
-    const q = query(ingredientsRef, where('available', '==', true), orderBy('category'), orderBy('name'));
-    return collectionData(q, { idField: 'id' }) as Observable<Ingredient[]>;
+    // Simplificado para evitar índice compuesto - ordenamiento en cliente
+    const q = query(ingredientsRef, where('available', '==', true));
+    return (collectionData(q, { idField: 'id' }) as Observable<Ingredient[]>).pipe(
+      map((ingredients: Ingredient[]) => {
+        // Ordenar en el cliente por categoría y nombre
+        return ingredients.sort((a, b) => {
+          if (a.category !== b.category) {
+            return a.category.localeCompare(b.category);
+          }
+          return a.name.localeCompare(b.name);
+        });
+      })
+    );
   }
 
   // Obtener ingredientes por categoría
@@ -202,8 +216,10 @@ export class FirestoreService {
   // Obtener todas las bebidas
   getDrinks(): Observable<Drink[]> {
     const drinksRef = collection(this.firestore, 'drinks');
-    const q = query(drinksRef, where('available', '==', true), orderBy('name'));
-    return collectionData(q, { idField: 'id' }) as Observable<Drink[]>;
+    const q = query(drinksRef, where('available', '==', true));
+    return (collectionData(q, { idField: 'id' }) as Observable<Drink[]>).pipe(
+      map((drinks: Drink[]) => drinks.sort((a, b) => a.name.localeCompare(b.name)))
+    );
   }
 
   // Crear bebida (solo admin)
@@ -249,8 +265,18 @@ export class FirestoreService {
   // Obtener órdenes de un usuario
   getUserOrders(userId: string): Observable<Order[]> {
     const ordersRef = collection(this.firestore, 'orders');
-    const q = query(ordersRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Order[]>;
+    const q = query(ordersRef, where('userId', '==', userId));
+    return (collectionData(q, { idField: 'id' }) as Observable<Order[]>).pipe(
+      map((orders: Order[]) => {
+        return orders.sort((a, b) => {
+          const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() :
+                       (a.createdAt as any).toDate ? (a.createdAt as any).toDate().getTime() : 0;
+          const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() :
+                       (b.createdAt as any).toDate ? (b.createdAt as any).toDate().getTime() : 0;
+          return dateB - dateA; // desc
+        });
+      })
+    );
   }
 
   // Obtener todas las órdenes (solo admin)
