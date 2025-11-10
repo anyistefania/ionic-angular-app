@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc,
-         updateDoc, deleteDoc, setDoc, query, where, orderBy, limit } from '@angular/fire/firestore';
+import { Injectable } from '@angular/core';
+import { Firestore, collection, doc, addDoc, updateDoc, deleteDoc, setDoc,
+         query, where, orderBy, limit, onSnapshot, QueryConstraint } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Product, User, Pizza, Ingredient, Drink, Order, StoreConfig } from '../models/models.model';
@@ -9,31 +9,66 @@ import { Product, User, Pizza, Ingredient, Drink, Order, StoreConfig } from '../
   providedIn: 'root'
 })
 export class FirestoreService {
-  private firestore: Firestore = inject(Firestore);
+
+  constructor(private firestore: Firestore) {}
+
+  // Helper para convertir query snapshot a Observable
+  private queryToObservable<T>(collectionRef: any): Observable<T[]> {
+    return new Observable(observer => {
+      const unsubscribe = onSnapshot(collectionRef,
+        (snapshot) => {
+          const data = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as T));
+          observer.next(data);
+        },
+        (error) => {
+          observer.error(error);
+        }
+      );
+      return () => unsubscribe();
+    });
+  }
+
+  // Helper para convertir document snapshot a Observable
+  private docToObservable<T>(documentRef: any): Observable<T> {
+    return new Observable(observer => {
+      const unsubscribe = onSnapshot(documentRef,
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const data = {
+              id: snapshot.id,
+              ...snapshot.data()
+            } as T;
+            observer.next(data);
+          }
+        },
+        (error) => {
+          observer.error(error);
+        }
+      );
+      return () => unsubscribe();
+    });
+  }
 
   // ============== PRODUCTOS ==============
 
-  // Obtener todos los productos
   getProducts(): Observable<Product[]> {
     const productsRef = collection(this.firestore, 'products');
     const q = query(productsRef, orderBy('createdAt', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Product[]>;
+    return this.queryToObservable<Product>(q);
   }
 
-  // Obtener un producto por ID
   getProduct(id: string): Observable<Product> {
     const productRef = doc(this.firestore, `products/${id}`);
-    return docData(productRef, { idField: 'id' }) as Observable<Product>;
+    return this.docToObservable<Product>(productRef);
   }
 
-  // Crear producto
   async createProduct(product: Product): Promise<any> {
     try {
       const productsRef = collection(this.firestore, 'products');
-      const newProduct = {
-        ...product,
-        createdAt: new Date()
-      };
+      const newProduct = { ...product, createdAt: new Date() };
       const docRef = await addDoc(productsRef, newProduct);
       return { success: true, id: docRef.id };
     } catch (error: any) {
@@ -41,7 +76,6 @@ export class FirestoreService {
     }
   }
 
-  // Actualizar producto
   async updateProduct(id: string, product: Partial<Product>): Promise<any> {
     try {
       const productRef = doc(this.firestore, `products/${id}`);
@@ -52,7 +86,6 @@ export class FirestoreService {
     }
   }
 
-  // Eliminar producto
   async deleteProduct(id: string): Promise<any> {
     try {
       const productRef = doc(this.firestore, `products/${id}`);
@@ -63,16 +96,14 @@ export class FirestoreService {
     }
   }
 
-  // Buscar productos por categoría
   getProductsByCategory(category: string): Observable<Product[]> {
     const productsRef = collection(this.firestore, 'products');
     const q = query(productsRef, where('category', '==', category));
-    return collectionData(q, { idField: 'id' }) as Observable<Product[]>;
+    return this.queryToObservable<Product>(q);
   }
 
   // ============== USUARIOS ==============
 
-  // Guardar/actualizar datos de usuario
   async saveUserData(uid: string, userData: Partial<User>): Promise<any> {
     try {
       const userRef = doc(this.firestore, `users/${uid}`);
@@ -83,13 +114,11 @@ export class FirestoreService {
     }
   }
 
-  // Obtener datos de usuario
   getUserData(uid: string): Observable<User> {
     const userRef = doc(this.firestore, `users/${uid}`);
-    return docData(userRef, { idField: 'uid' }) as Observable<User>;
+    return this.docToObservable<User>(userRef);
   }
 
-  // Actualizar datos de usuario
   async updateUserData(uid: string, userData: Partial<User>): Promise<any> {
     try {
       const userRef = doc(this.firestore, `users/${uid}`);
@@ -102,36 +131,29 @@ export class FirestoreService {
 
   // ============== PIZZAS ==============
 
-  // Obtener todas las pizzas
   getPizzas(): Observable<Pizza[]> {
     const pizzasRef = collection(this.firestore, 'pizzas');
     const q = query(pizzasRef, where('available', '==', true));
-    return (collectionData(q, { idField: 'id' }) as Observable<Pizza[]>).pipe(
+    return this.queryToObservable<Pizza>(q).pipe(
       map((pizzas: Pizza[]) => pizzas.sort((a, b) => a.name.localeCompare(b.name)))
     );
   }
 
-  // Obtener pizzas populares
   getPopularPizzas(): Observable<Pizza[]> {
     const pizzasRef = collection(this.firestore, 'pizzas');
     const q = query(pizzasRef, where('popular', '==', true), where('available', '==', true), limit(6));
-    return collectionData(q, { idField: 'id' }) as Observable<Pizza[]>;
+    return this.queryToObservable<Pizza>(q);
   }
 
-  // Obtener una pizza por ID
   getPizza(id: string): Observable<Pizza> {
     const pizzaRef = doc(this.firestore, `pizzas/${id}`);
-    return docData(pizzaRef, { idField: 'id' }) as Observable<Pizza>;
+    return this.docToObservable<Pizza>(pizzaRef);
   }
 
-  // Crear pizza (solo admin)
   async createPizza(pizza: Pizza): Promise<any> {
     try {
       const pizzasRef = collection(this.firestore, 'pizzas');
-      const newPizza = {
-        ...pizza,
-        createdAt: new Date()
-      };
+      const newPizza = { ...pizza, createdAt: new Date() };
       const docRef = await addDoc(pizzasRef, newPizza);
       return { success: true, id: docRef.id };
     } catch (error: any) {
@@ -139,7 +161,6 @@ export class FirestoreService {
     }
   }
 
-  // Actualizar pizza (solo admin)
   async updatePizza(id: string, pizza: Partial<Pizza>): Promise<any> {
     try {
       const pizzaRef = doc(this.firestore, `pizzas/${id}`);
@@ -150,7 +171,6 @@ export class FirestoreService {
     }
   }
 
-  // Eliminar pizza (solo admin)
   async deletePizza(id: string): Promise<any> {
     try {
       const pizzaRef = doc(this.firestore, `pizzas/${id}`);
@@ -163,14 +183,11 @@ export class FirestoreService {
 
   // ============== INGREDIENTES ==============
 
-  // Obtener todos los ingredientes
   getIngredients(): Observable<Ingredient[]> {
     const ingredientsRef = collection(this.firestore, 'ingredients');
-    // Simplificado para evitar índice compuesto - ordenamiento en cliente
     const q = query(ingredientsRef, where('available', '==', true));
-    return (collectionData(q, { idField: 'id' }) as Observable<Ingredient[]>).pipe(
+    return this.queryToObservable<Ingredient>(q).pipe(
       map((ingredients: Ingredient[]) => {
-        // Ordenar en el cliente por categoría y nombre
         return ingredients.sort((a, b) => {
           if (a.category !== b.category) {
             return a.category.localeCompare(b.category);
@@ -181,14 +198,12 @@ export class FirestoreService {
     );
   }
 
-  // Obtener ingredientes por categoría
   getIngredientsByCategory(category: string): Observable<Ingredient[]> {
     const ingredientsRef = collection(this.firestore, 'ingredients');
     const q = query(ingredientsRef, where('category', '==', category), where('available', '==', true));
-    return collectionData(q, { idField: 'id' }) as Observable<Ingredient[]>;
+    return this.queryToObservable<Ingredient>(q);
   }
 
-  // Crear ingrediente (solo admin)
   async createIngredient(ingredient: Ingredient): Promise<any> {
     try {
       const ingredientsRef = collection(this.firestore, 'ingredients');
@@ -199,7 +214,6 @@ export class FirestoreService {
     }
   }
 
-  // Actualizar ingrediente (solo admin)
   async updateIngredient(id: string, ingredient: Partial<Ingredient>): Promise<any> {
     try {
       const ingredientRef = doc(this.firestore, `ingredients/${id}`);
@@ -212,16 +226,14 @@ export class FirestoreService {
 
   // ============== BEBIDAS ==============
 
-  // Obtener todas las bebidas
   getDrinks(): Observable<Drink[]> {
     const drinksRef = collection(this.firestore, 'drinks');
     const q = query(drinksRef, where('available', '==', true));
-    return (collectionData(q, { idField: 'id' }) as Observable<Drink[]>).pipe(
+    return this.queryToObservable<Drink>(q).pipe(
       map((drinks: Drink[]) => drinks.sort((a, b) => a.name.localeCompare(b.name)))
     );
   }
 
-  // Crear bebida (solo admin)
   async createDrink(drink: Drink): Promise<any> {
     try {
       const drinksRef = collection(this.firestore, 'drinks');
@@ -232,7 +244,6 @@ export class FirestoreService {
     }
   }
 
-  // Actualizar bebida (solo admin)
   async updateDrink(id: string, drink: Partial<Drink>): Promise<any> {
     try {
       const drinkRef = doc(this.firestore, `drinks/${id}`);
@@ -245,7 +256,6 @@ export class FirestoreService {
 
   // ============== ÓRDENES ==============
 
-  // Crear orden
   async createOrder(order: Order): Promise<any> {
     try {
       const ordersRef = collection(this.firestore, 'orders');
@@ -261,37 +271,33 @@ export class FirestoreService {
     }
   }
 
-  // Obtener órdenes de un usuario
   getUserOrders(userId: string): Observable<Order[]> {
     const ordersRef = collection(this.firestore, 'orders');
     const q = query(ordersRef, where('userId', '==', userId));
-    return (collectionData(q, { idField: 'id' }) as Observable<Order[]>).pipe(
+    return this.queryToObservable<Order>(q).pipe(
       map((orders: Order[]) => {
         return orders.sort((a, b) => {
           const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() :
                        (a.createdAt as any).toDate ? (a.createdAt as any).toDate().getTime() : 0;
           const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() :
                        (b.createdAt as any).toDate ? (b.createdAt as any).toDate().getTime() : 0;
-          return dateB - dateA; // desc
+          return dateB - dateA;
         });
       })
     );
   }
 
-  // Obtener todas las órdenes (solo admin)
   getAllOrders(): Observable<Order[]> {
     const ordersRef = collection(this.firestore, 'orders');
     const q = query(ordersRef, orderBy('createdAt', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Order[]>;
+    return this.queryToObservable<Order>(q);
   }
 
-  // Obtener una orden por ID
   getOrder(id: string): Observable<Order> {
     const orderRef = doc(this.firestore, `orders/${id}`);
-    return docData(orderRef, { idField: 'id' }) as Observable<Order>;
+    return this.docToObservable<Order>(orderRef);
   }
 
-  // Actualizar estado de orden
   async updateOrderStatus(orderId: string, status: string): Promise<any> {
     try {
       const orderRef = doc(this.firestore, `orders/${orderId}`);
@@ -305,7 +311,6 @@ export class FirestoreService {
     }
   }
 
-  // Actualizar orden completa
   async updateOrder(orderId: string, order: Partial<Order>): Promise<any> {
     try {
       const orderRef = doc(this.firestore, `orders/${orderId}`);
@@ -321,13 +326,11 @@ export class FirestoreService {
 
   // ============== CONFIGURACIÓN DE LA TIENDA ==============
 
-  // Obtener configuración de la tienda
   getStoreConfig(): Observable<StoreConfig> {
     const configRef = doc(this.firestore, 'config/store');
-    return docData(configRef, { idField: 'id' }) as Observable<StoreConfig>;
+    return this.docToObservable<StoreConfig>(configRef);
   }
 
-  // Actualizar configuración de la tienda (solo admin)
   async updateStoreConfig(config: Partial<StoreConfig>): Promise<any> {
     try {
       const configRef = doc(this.firestore, 'config/store');
