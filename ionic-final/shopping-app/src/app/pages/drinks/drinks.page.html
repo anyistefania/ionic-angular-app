@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/pizzas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Bebidas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-spinner *ngIf="loading"></ion-spinner>
+
+  <ion-grid *ngIf="!loading">
+    <ion-row>
+      <ion-col *ngFor="let drink of drinks" size="12" size-md="6" size-lg="4">
+        <ion-card>
+          <img [src]="drink.imageUrl" [alt]="drink.name" onerror="this.src='assets/placeholder-drink.jpg'">
+          <ion-card-header>
+            <ion-card-subtitle>{{drink.size}}</ion-card-subtitle>
+            <ion-card-title>{{drink.name}}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{drink.description}}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+              <h3>${{drink.price.toFixed(2)}}</h3>
+              <ion-button (click)="addToCart(drink)">
+                <ion-icon name="add" slot="start"></ion-icon>
+                Agregar
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,176 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/pizzas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Crea Tu Pizza</ion-title>
+  </ion-toolbar>
+
+  <!-- Progreso -->
+  <ion-toolbar>
+    <ion-progressbar [value]="currentStep / totalSteps"></ion-progressbar>
+    <div class="steps-indicator">
+      <div class="step" [class.active]="currentStep === 1" [class.complete]="currentStep > 1">1. Tamaño</div>
+      <div class="step" [class.active]="currentStep === 2" [class.complete]="currentStep > 2">2. Base</div>
+      <div class="step" [class.active]="currentStep === 3" [class.complete]="currentStep > 3">3. Salsa</div>
+      <div class="step" [class.active]="currentStep === 4" [class.complete]="currentStep > 4">4. Queso</div>
+      <div class="step" [class.active]="currentStep === 5">5. Ingredientes</div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+
+  <!-- Paso 1: Seleccionar Tamaño -->
+  <div *ngIf="currentStep === 1 && !loading" class="step-content">
+    <h2 class="ion-text-center">Selecciona el Tamaño</h2>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let size of sizes" size="12" size-sm="6">
+          <ion-card button (click)="selectSize(size)" [class.selected]="customPizza.size?.id === size.id">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="pizza-outline" size="large"></ion-icon>
+              <h3>{{size.name}}</h3>
+              <p>{{size.slices}} porciones</p>
+              <p class="price">Multiplicador: x{{size.priceMultiplier}}</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Paso 2: Seleccionar Base -->
+  <div *ngIf="currentStep === 2 && !loading" class="step-content">
+    <h2 class="ion-text-center">Selecciona la Base</h2>
+    <ion-list>
+      <ion-item *ngFor="let base of bases" button (click)="selectBase(base)" [class.selected]="customPizza.base?.id === base.id">
+        <ion-label>
+          <h3>{{base.name}}</h3>
+          <p>${{base.price.toFixed(2)}}</p>
+        </ion-label>
+        <ion-icon *ngIf="customPizza.base?.id === base.id" name="checkmark-circle" color="primary" slot="end"></ion-icon>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" (click)="previousStep()" fill="outline">Anterior</ion-button>
+  </div>
+
+  <!-- Paso 3: Seleccionar Salsa -->
+  <div *ngIf="currentStep === 3 && !loading" class="step-content">
+    <h2 class="ion-text-center">Selecciona la Salsa</h2>
+    <ion-list>
+      <ion-item *ngFor="let sauce of sauces" button (click)="selectSauce(sauce)" [class.selected]="customPizza.sauce?.id === sauce.id">
+        <ion-label>
+          <h3>{{sauce.name}}</h3>
+          <p>${{sauce.price.toFixed(2)}}</p>
+        </ion-label>
+        <ion-icon *ngIf="customPizza.sauce?.id === sauce.id" name="checkmark-circle" color="primary" slot="end"></ion-icon>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" (click)="previousStep()" fill="outline">Anterior</ion-button>
+  </div>
+
+  <!-- Paso 4: Seleccionar Queso (Opcional) -->
+  <div *ngIf="currentStep === 4 && !loading" class="step-content">
+    <h2 class="ion-text-center">Selecciona el Queso</h2>
+    <p class="ion-text-center">Opcional - Puedes omitir este paso</p>
+    <ion-list>
+      <ion-item *ngFor="let cheese of cheeses" button (click)="selectCheese(cheese)" [class.selected]="customPizza.cheese?.id === cheese.id">
+        <ion-label>
+          <h3>{{cheese.name}}</h3>
+          <p>${{cheese.price.toFixed(2)}}</p>
+        </ion-label>
+        <ion-icon *ngIf="customPizza.cheese?.id === cheese.id" name="checkmark-circle" color="primary" slot="end"></ion-icon>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" (click)="previousStep()" fill="outline">Anterior</ion-button>
+    <ion-button expand="block" (click)="nextStep()">Continuar sin Queso</ion-button>
+  </div>
+
+  <!-- Paso 5: Seleccionar Ingredientes -->
+  <div *ngIf="currentStep === 5 && !loading" class="step-content">
+    <h2 class="ion-text-center">Selecciona tus Ingredientes</h2>
+    <p class="ion-text-center">Máximo 10 ingredientes ({{customPizza.toppings.length}}/10)</p>
+
+    <!-- Carnes -->
+    <ion-list-header>
+      <ion-label>Carnes</ion-label>
+    </ion-list-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let meat of meats" size="6" size-sm="4">
+          <ion-card button (click)="toggleTopping(meat)" [class.selected]="isToppingSelected(meat)">
+            <ion-card-content class="topping-card">
+              <ion-icon *ngIf="isToppingSelected(meat)" name="checkmark-circle" color="primary" class="check-icon"></ion-icon>
+              <h4>{{meat.name}}</h4>
+              <p>${{meat.price.toFixed(2)}}</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Vegetales -->
+    <ion-list-header>
+      <ion-label>Vegetales</ion-label>
+    </ion-list-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let vegetal of vegetables" size="6" size-sm="4">
+          <ion-card button (click)="toggleTopping(vegetal)" [class.selected]="isToppingSelected(vegetal)">
+            <ion-card-content class="topping-card">
+              <ion-icon *ngIf="isToppingSelected(vegetal)" name="checkmark-circle" color="primary" class="check-icon"></ion-icon>
+              <h4>{{vegetal.name}}</h4>
+              <p>${{vegetal.price.toFixed(2)}}</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Extras -->
+    <ion-list-header *ngIf="extras.length > 0">
+      <ion-label>Extras</ion-label>
+    </ion-list-header>
+    <ion-grid *ngIf="extras.length > 0">
+      <ion-row>
+        <ion-col *ngFor="let extra of extras" size="6" size-sm="4">
+          <ion-card button (click)="toggleTopping(extra)" [class.selected]="isToppingSelected(extra)">
+            <ion-card-content class="topping-card">
+              <ion-icon *ngIf="isToppingSelected(extra)" name="checkmark-circle" color="primary" class="check-icon"></ion-icon>
+              <h4>{{extra.name}}</h4>
+              <p>${{extra.price.toFixed(2)}}</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <div class="actions">
+      <ion-button expand="block" (click)="previousStep()" fill="outline">Anterior</ion-button>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Footer con precio y acciones -->
+<ion-footer *ngIf="!loading">
+  <ion-toolbar>
+    <div class="footer-content">
+      <div class="price-info">
+        <h2>Total: ${{customPizza.totalPrice.toFixed(2)}}</h2>
+        <p *ngIf="customPizza.size">{{customPizza.size.name}}</p>
+      </div>
+      <div class="actions">
+        <ion-button (click)="reset()" fill="outline" color="medium">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Reiniciar
+        </ion-button>
+        <ion-button (click)="addToCart()" color="primary" [disabled]="!customPizza.size || !customPizza.base">
+          <ion-icon name="cart" slot="start"></ion-icon>
+          Agregar al Carrito
+        </ion-button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>

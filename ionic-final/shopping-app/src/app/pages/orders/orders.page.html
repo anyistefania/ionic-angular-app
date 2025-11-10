@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/pizzas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Órdenes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="orders.length > 0">
+    <ion-item *ngFor="let order of orders" [routerLink]="['/order-tracking', order.id]">
+      <ion-label>
+        <h2>Orden #{{order.id?.slice(0,8)}}</h2>
+        <p>{{order.createdAt.toDate() | date:'short'}}</p>
+        <p>${{order.total.toFixed(2)}} - {{order.status}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="orders.length === 0" style="padding: 40px; text-align: center;">
+    <ion-icon name="receipt-outline" style="font-size: 80px; color: var(--ion-color-medium);"></ion-icon>
+    <p>No tienes órdenes aún</p>
+  </div>
+</ion-content>
