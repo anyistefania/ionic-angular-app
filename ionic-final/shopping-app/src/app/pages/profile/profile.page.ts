@@ -1,32 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
 import { FirestoreService } from '../../services/firestore.service';
-import { User } from 'src/app/models/models.model';
+import { User } from '../../models/models.model';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
-    standalone:false
-
+  standalone: false
 })
 export class ProfilePage implements OnInit {
   user: User | null = null;
   isEditing: boolean = false;
-  
+
   // Campos editables
   displayName: string = '';
   phoneNumber: string = '';
-  address: string = '';
 
   constructor(
     private authService: AuthService,
     private firestoreService: FirestoreService,
     private router: Router,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -35,35 +34,26 @@ export class ProfilePage implements OnInit {
 
   async loadUserData() {
     const currentUser = this.authService.getCurrentUser();
-    
+
     if (currentUser) {
-      // Cargar datos desde Firestore
-      this.firestoreService.getUserData(currentUser.uid).subscribe(userData => {
-        this.user = userData;
-        this.displayName = userData.displayName || '';
-        this.phoneNumber = userData.phoneNumber || '';
-        this.address = userData.address || '';
-      }, error => {
-        // Si no existe en Firestore, crear documento inicial
-        this.user = {
-          uid: currentUser.uid,
-          email: currentUser.email || '',
-          displayName: currentUser.displayName || '',
-          photoURL: currentUser.photoURL || undefined
-        };
-        this.displayName = this.user.displayName;
+      // Cargar datos desde Firestore usando el observable del servicio
+      this.authService.userData$.subscribe(userData => {
+        if (userData) {
+          this.user = userData;
+          this.displayName = userData.displayName || '';
+          this.phoneNumber = userData.phoneNumber || '';
+        }
       });
     }
   }
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
-    
+
     if (!this.isEditing && this.user) {
       // Restaurar valores originales si se cancela
       this.displayName = this.user.displayName || '';
       this.phoneNumber = this.user.phoneNumber || '';
-      this.address = this.user.address || '';
     }
   }
 
@@ -75,25 +65,19 @@ export class ProfilePage implements OnInit {
     });
     await loading.present();
 
-    // Actualizar en Firebase Auth
-    if (this.displayName !== this.user.displayName) {
-      await this.authService.updateUserProfile(this.displayName);
-    }
+    try {
+      // Actualizar en Firebase Auth y Firestore
+      await this.authService.updateUserProfile(
+        this.displayName,
+        undefined,
+        this.phoneNumber
+      );
 
-    // Actualizar en Firestore
-    const result = await this.firestoreService.updateUserData(this.user.uid, {
-      displayName: this.displayName,
-      phoneNumber: this.phoneNumber,
-      address: this.address
-    });
-
-    await loading.dismiss();
-
-    if (result.success) {
+      await loading.dismiss();
       this.isEditing = false;
-      this.showAlert('Éxito', 'Perfil actualizado correctamente');
-      this.loadUserData();
-    } else {
+      this.showToast('Perfil actualizado correctamente');
+    } catch (error) {
+      await loading.dismiss();
       this.showAlert('Error', 'No se pudo actualizar el perfil');
     }
   }
@@ -125,12 +109,7 @@ export class ProfilePage implements OnInit {
               await loading.present();
 
               await this.authService.updateUserProfile(undefined, data.photoURL);
-              await this.firestoreService.updateUserData(this.user.uid, {
-                photoURL: data.photoURL
-              });
-
               await loading.dismiss();
-              this.loadUserData();
               this.showToast('Foto actualizada');
             }
           }
@@ -160,8 +139,8 @@ export class ProfilePage implements OnInit {
     await alert.present();
   }
 
-  goToProducts() {
-    this.router.navigate(['/products']);
+  goToPizzas() {
+    this.router.navigate(['/pizzas']);
   }
 
   async showAlert(header: string, message: string) {
@@ -174,11 +153,12 @@ export class ProfilePage implements OnInit {
   }
 
   async showToast(message: string) {
-    const alert = await this.alertController.create({
+    const toast = await this.toastController.create({
       message,
-      // duration: 2000,
-      buttons: ['OK']
+      duration: 2000,
+      position: 'bottom',
+      color: 'success'
     });
-    await alert.present();
+    toast.present();
   }
 }

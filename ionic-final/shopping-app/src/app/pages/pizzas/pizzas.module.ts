@@ -10,8 +10,8 @@ import { PizzasPage } from './pizzas.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    PizzasPageRoutingModule
-  ],
-  declarations: [PizzasPage]
+    PizzasPageRoutingModule,
+    PizzasPage
+  ]
 })
 export class PizzasPageModule {}
