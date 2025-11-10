@@ -10,7 +10,9 @@ import { CustomPizzaPage } from './custom-pizza.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    CustomPizzaPageRoutingModule,
+    CustomPizzaPageRoutingModule
+  ],
+  declarations: [
     CustomPizzaPage
   ]
 })

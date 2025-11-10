@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { PizzasPageRoutingModule } from './pizzas-routing.module';
 import { PizzasPage } from './pizzas.page';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -11,6 +12,9 @@ import { PizzasPage } from './pizzas.page';
     FormsModule,
     IonicModule,
     PizzasPageRoutingModule,
+    SharedModule
+  ],
+  declarations: [
     PizzasPage
   ]
 })
