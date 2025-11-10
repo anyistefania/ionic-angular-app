@@ -23,8 +23,8 @@ export class CustomPizzaPage implements OnInit {
   customPizza: CustomPizza = {
     size: null as any,
     base: null as any,
-    cheese: null,
-    sauce: null,
+    cheese: undefined,
+    sauce: undefined,
     toppings: [],
     totalPrice: 0
   };
@@ -150,8 +150,8 @@ export class CustomPizzaPage implements OnInit {
     this.customPizza = {
       size: null as any,
       base: null as any,
-      cheese: null,
-      sauce: null,
+      cheese: undefined,
+      sauce: undefined,
       toppings: [],
       totalPrice: 0
     };

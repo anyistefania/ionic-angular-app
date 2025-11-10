@@ -6,7 +6,12 @@ import { OrderTrackingPageRoutingModule } from './order-tracking-routing.module'
 import { OrderTrackingPage } from './order-tracking.page';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, OrderTrackingPageRoutingModule],
-  declarations: [OrderTrackingPage]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    OrderTrackingPageRoutingModule,
+    OrderTrackingPage
+  ]
 })
 export class OrderTrackingPageModule {}

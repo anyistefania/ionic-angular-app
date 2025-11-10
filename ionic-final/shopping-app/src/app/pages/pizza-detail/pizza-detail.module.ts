@@ -6,7 +6,12 @@ import { PizzaDetailPageRoutingModule } from './pizza-detail-routing.module';
 import { PizzaDetailPage } from './pizza-detail.page';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, PizzaDetailPageRoutingModule],
-  declarations: [PizzaDetailPage]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    PizzaDetailPageRoutingModule,
+    PizzaDetailPage
+  ]
 })
 export class PizzaDetailPageModule {}

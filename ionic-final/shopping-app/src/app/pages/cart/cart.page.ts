@@ -1,78 +1,86 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { CartService } from '../../services/cart.service';
-import { CartItem } from 'src/app/models/models.model';
+import { CartItem, Pizza, CustomPizza, Drink } from '../../models/models.model';
+import { PizzaService } from '../../services/pizza.service';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
-    standalone:false
-
+  standalone: false
 })
 export class CartPage implements OnInit {
   cartItems: CartItem[] = [];
+  subtotal: number = 0;
+  deliveryFee: number = 0;
   total: number = 0;
 
   constructor(
     private cartService: CartService,
+    private pizzaService: PizzaService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
-    this.loadCart();
-  }
-
-  loadCart() {
+    // Suscribirse a cambios del carrito en tiempo real
     this.cartService.cart$.subscribe(items => {
       this.cartItems = items;
+      this.subtotal = this.cartService.getSubtotal();
     });
 
     this.cartService.total$.subscribe(total => {
       this.total = total;
+      this.deliveryFee = this.cartService.getDeliveryFee();
     });
   }
 
-  async updateQuantity(productId: string, quantity: number) {
-    if (quantity <= 0) {
-      const alert = await this.alertController.create({
-        header: 'Confirmar',
-        message: '¿Eliminar este producto del carrito?',
-        buttons: [
-          {
-            text: 'Cancelar',
-            role: 'cancel'
-          },
-          {
-            text: 'Eliminar',
-            handler: () => {
-              this.cartService.removeFromCart(productId);
-            }
-          }
-        ]
-      });
-      await alert.present();
+  getItemName(item: CartItem): string {
+    if (item.type === 'custom-pizza') {
+      return 'Pizza Personalizada';
+    } else if (item.type === 'predefined-pizza') {
+      return (item.item as Pizza).name;
     } else {
-      this.cartService.updateQuantity(productId, quantity);
+      return (item.item as Drink).name;
     }
   }
 
-  incrementQuantity(item: CartItem) {
-    const newQuantity = item.quantity + 1;
-    if (newQuantity <= item.product.stock) {
-      this.cartService.updateQuantity(item.product.id!, newQuantity);
+  getItemImage(item: CartItem): string {
+    if (item.type === 'custom-pizza') {
+      return 'assets/custom-pizza.jpg';
+    } else if (item.type === 'predefined-pizza') {
+      return (item.item as Pizza).imageUrl;
     } else {
-      this.showAlert('Stock insuficiente', `Solo hay ${item.product.stock} unidades disponibles`);
+      return (item.item as Drink).imageUrl;
+    }
+  }
+
+  getCustomPizzaDescription(item: CartItem): string {
+    if (item.type !== 'custom-pizza') return '';
+    const customPizza = item.item as CustomPizza;
+    return this.pizzaService.getCustomPizzaDescription(customPizza);
+  }
+
+  incrementQuantity(item: CartItem) {
+    if (item.id) {
+      this.cartService.updateItemQuantity(item.id, item.quantity + 1);
     }
   }
 
   decrementQuantity(item: CartItem) {
-    this.updateQuantity(item.product.id!, item.quantity - 1);
+    if (item.id) {
+      if (item.quantity === 1) {
+        this.removeItem(item.id);
+      } else {
+        this.cartService.updateItemQuantity(item.id, item.quantity - 1);
+      }
+    }
   }
 
-  async removeItem(productId: string) {
+  async removeItem(itemId: string) {
     const alert = await this.alertController.create({
       header: 'Confirmar',
       message: '¿Eliminar este producto del carrito?',
@@ -84,7 +92,7 @@ export class CartPage implements OnInit {
         {
           text: 'Eliminar',
           handler: () => {
-            this.cartService.removeFromCart(productId);
+            this.cartService.removeItem(itemId);
             this.showToast('Producto eliminado del carrito');
           }
         }
@@ -120,30 +128,8 @@ export class CartPage implements OnInit {
       return;
     }
 
-    const alert = await this.alertController.create({
-      header: 'Confirmar Compra',
-      message: `Total: $${this.total.toFixed(2)}`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirmar',
-          handler: () => {
-            // Aquí puedes agregar lógica para procesar la orden
-            this.showAlert('¡Éxito!', 'Compra realizada exitosamente');
-            this.cartService.clearCart();
-            this.router.navigate(['/products']);
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  goToProducts() {
-    this.router.navigate(['/products']);
+    // Navegar a checkout
+    this.router.navigate(['/checkout']);
   }
 
   async showAlert(header: string, message: string) {
@@ -156,15 +142,12 @@ export class CartPage implements OnInit {
   }
 
   async showToast(message: string) {
-    const alert = await this.alertController.create({
+    const toast = await this.toastController.create({
       message,
-      // duration: 2000,
-      buttons: ['OK']
+      duration: 2000,
+      position: 'bottom',
+      color: 'success'
     });
-    await alert.present();
-  }
-
-  getSubtotal(item: CartItem): number {
-    return item.product.price * item.quantity;
+    toast.present();
   }
 }
